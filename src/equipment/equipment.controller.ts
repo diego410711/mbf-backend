@@ -20,7 +20,7 @@ import { Response } from 'express';
 
 @Controller('equipment')
 export class EquipmentController {
-  constructor(private readonly service: EquipmentService) {}
+  constructor(private readonly service: EquipmentService) { }
 
   @Post()
   @UseInterceptors(
@@ -87,12 +87,36 @@ export class EquipmentController {
   }
 
   @Put(':id')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'photo_0', maxCount: 1 },
+      { name: 'photo_1', maxCount: 1 },
+      { name: 'photo_2', maxCount: 1 },
+      { name: 'invoice', maxCount: 1 },
+    ]),
+  )
   async update(
     @Param('id') id: string,
     @Body() data: Partial<Equipment>,
+    @UploadedFiles()
+    files: {
+      photo_0?: Express.Multer.File[];
+      photo_1?: Express.Multer.File[];
+      photo_2?: Express.Multer.File[];
+      invoice?: Express.Multer.File[];
+    },
   ): Promise<Equipment> {
-    return this.service.update(id, data); // Mongoose maneja las propiedades automáticamente
+    const photos = [
+      files.photo_0?.[0],
+      files.photo_1?.[0],
+      files.photo_2?.[0],
+    ].filter(Boolean); // Filtra valores undefined
+
+    const invoice = files.invoice?.[0] || null; // Si existe, la toma; si no, es null
+
+    return this.service.update(id, { ...data }, photos, invoice);
   }
+
 
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<void> {

@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Equipment, EquipmentDocument } from './equipment.schema';
@@ -69,15 +69,32 @@ export class EquipmentService {
   }
 
   // Actualizar un equipo
-  async update(id: string, data: Partial<Equipment>): Promise<Equipment> {
-    const updatedEquipment = await this.equipmentModel
-      .findByIdAndUpdate(id, data, { new: true })
-      .exec();
-    if (!updatedEquipment) {
-      throw new NotFoundException('Equipo no encontrado');
+  async update(
+    id: string,
+    data: Partial<Equipment>,
+    photos?: Express.Multer.File[],
+    invoice?: Express.Multer.File,
+  ): Promise<Equipment> {
+    const existingEquipment = await this.findOne(id);
+    if (!existingEquipment) {
+      throw new HttpException('Equipo no encontrado', HttpStatus.NOT_FOUND);
     }
-    return updatedEquipment;
+
+    const updateData: Partial<Equipment> = { ...data };
+
+    // Si hay nuevas fotos, reemplazarlas
+    if (photos?.length) {
+      updateData.photos = photos.map((file) => file.buffer);
+    }
+
+    // Si hay nueva factura, reemplazarla
+    if (invoice) {
+      updateData.invoice = invoice.buffer;
+    }
+
+    return this.equipmentModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
   }
+
 
   // Eliminar un equipo
   async delete(id: string): Promise<void> {
