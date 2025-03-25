@@ -104,6 +104,24 @@ export class EquipmentService {
     }
   }
 
+  async removePhoto(id: string, photoUrl: string): Promise<Equipment> {
+    const equipment = await this.findOne(id);
+
+    if (!equipment.photos || !Array.isArray(equipment.photos)) {
+      throw new NotFoundException('El equipo no tiene fotos registradas.');
+    }
+
+    const updatedPhotos = equipment.photos.filter(photo => photo.toString('base64') !== photoUrl);
+
+    if (updatedPhotos.length === equipment.photos.length) {
+      throw new NotFoundException('Foto no encontrada en el equipo.');
+    }
+
+    equipment.photos = updatedPhotos;
+    return this.equipmentModel.findByIdAndUpdate(id, equipment, { new: true }).exec();
+  }
+
+
   async generatePDF(equipment: any): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const doc = new PDFDocument();

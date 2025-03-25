@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
   UploadedFiles,
@@ -41,14 +42,22 @@ export class EquipmentController {
       invoice?: Express.Multer.File[];
     },
   ): Promise<Equipment> {
-    const photos = [
-      files.photo_0?.[0],
-      files.photo_1?.[0],
-      files.photo_2?.[0],
-    ].filter(Boolean); // Elimina valores undefined
-    const invoice = files.invoice?.[0] || null; // Toma la factura si existe
+    try {
+      const photos = [
+        files.photo_0?.[0],
+        files.photo_1?.[0],
+        files.photo_2?.[0],
+      ].filter(Boolean); // Elimina valores undefined
 
-    return this.service.create({ ...data }, photos, invoice);
+      const invoice = files.invoice?.[0] || null;
+
+      return await this.service.create({ ...data }, photos, invoice);
+    } catch (error) {
+      throw new HttpException(
+        `Error al crear el equipo: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Get()
@@ -63,17 +72,20 @@ export class EquipmentController {
 
   @Get(':id/photos')
   async getPhotos(@Param('id') id: string, @Res() res: Response) {
-    const photos = await this.service.getPhotos(id);
-    if (!photos || photos.length === 0) {
-      return res.status(404).json({ message: 'Fotos no encontradas.' });
-    }
+    try {
+      const photos = await this.service.getPhotos(id);
+      if (!photos || photos.length === 0) {
+        return res.status(404).json({ message: 'Fotos no encontradas.' });
+      }
 
-    // Enviar fotos como un arreglo de buffers codificados en Base64
-    res.json(
-      photos.map((photo) => ({
-        buffer: photo.toString('base64'), // Base64 para la visualización en el cliente
-      })),
-    );
+      res.json(
+        photos.map((photo) => ({
+          buffer: photo.toString('base64'),
+        })),
+      );
+    } catch (error) {
+      res.status(500).json({ message: 'Error al obtener las fotos.' });
+    }
   }
 
   @Get(':id/invoice')
@@ -106,27 +118,48 @@ export class EquipmentController {
       invoice?: Express.Multer.File[];
     },
   ): Promise<Equipment> {
-    const photos = [
-      files.photo_0?.[0],
-      files.photo_1?.[0],
-      files.photo_2?.[0],
-    ].filter(Boolean); // Filtra valores undefined
+    try {
+      const photos = [
+        files.photo_0?.[0],
+        files.photo_1?.[0],
+        files.photo_2?.[0],
+      ].filter(Boolean);
 
-    const invoice = files.invoice?.[0] || null; // Si existe, la toma; si no, es null
+      const invoice = files.invoice?.[0] || null;
 
-    return this.service.update(id, { ...data }, photos, invoice);
+      return await this.service.update(id, { ...data }, photos, invoice);
+    } catch (error) {
+      throw new HttpException(
+        `Error al actualizar el equipo: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
-
 
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<void> {
     return this.service.delete(id);
   }
 
+  @Patch(':id/photo')
+  async deletePhoto(
+    @Param('id') id: string,
+    @Body('photoUrl') photoUrl: string,
+  ) {
+    try {
+      const updatedEquipment = await this.service.removePhoto(id, photoUrl);
+      return { message: 'Foto eliminada correctamente', equipment: updatedEquipment };
+    } catch (error) {
+      throw new HttpException(
+        `Error al eliminar la foto: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   @Get('generate-pdf/:id')
   async generatePDF(@Param('id') id: string, @Res() res: Response) {
     try {
-      // Obtener el inventario por ID desde la base de datos
       const equipment = await this.service.findOne(id);
       if (!equipment) {
         throw new HttpException(
@@ -135,13 +168,9 @@ export class EquipmentController {
         );
       }
 
-      // Generar el PDF en memoria como buffer
       const pdfBuffer = await this.service.generatePDF(equipment);
-
-      // Convertir el buffer a Base64
       const base64PDF = pdfBuffer.toString('base64');
 
-      // Enviar la respuesta como JSON con el Base64
       res.status(HttpStatus.OK).json({
         message: 'PDF generado correctamente',
         base64: base64PDF,
