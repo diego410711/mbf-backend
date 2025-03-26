@@ -13,11 +13,20 @@ import {
   Res,
   HttpException,
   HttpStatus,
+  Req,
+  Query,
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { EquipmentService } from './equipment.service';
 import { Equipment } from './equipment.schema';
-import { Response } from 'express';
+import { Response, Request } from 'express';
+
+// Extend the Request interface to include the 'user' property
+declare module 'express' {
+  interface Request {
+    user?: { name: string; role: string };
+  }
+}
 
 @Controller('equipment')
 export class EquipmentController {
@@ -61,9 +70,21 @@ export class EquipmentController {
   }
 
   @Get()
-  async findAll(): Promise<Equipment[]> {
+  async findAll(@Req() req: Request, @Query('technicianName') technicianName?: string): Promise<Equipment[]> {
+    // Obtener usuario autenticado
+
+    // Determinar el nombre del técnico desde req.user o la URL
+    const technician = technicianName
+
+    // Si hay un técnico, filtrar por su nombre
+    if (technician) {
+      return this.service.findByTechnician(technician);
+    }
+
+    // Si no hay filtro, devolver todos los servicios
     return this.service.findAll();
   }
+
 
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Equipment> {
