@@ -30,15 +30,20 @@ export class Equipment {
   @Prop()
   assignedTechnician?: string; // Nuevo campo agregado
 
-  // Ficha técnica ahora es opcional
   @Prop({ unique: true, sparse: true })
-  technicalDataSheet?: string;
+  technicalDataSheet?: string; // Ahora opcional
 
   @Prop()
   diagnosis: string;
 
   @Prop()
   customerApproval: string;
+
+  @Prop({ type: Date }) // 📅 Nueva propiedad para la fecha de autorización
+  authorizationDate?: Date;
+
+  @Prop({ type: Date }) // 📅 Nueva propiedad para la fecha de entrega
+  deliveryDate?: Date;
 }
 
 export const EquipmentSchema = SchemaFactory.createForClass(Equipment);

@@ -97,6 +97,15 @@ export class EquipmentService {
 
     const updateData: Partial<Equipment> = { ...data };
 
+    // Convertir fechas si existen
+    if (data.authorizationDate) {
+      updateData.authorizationDate = new Date(data.authorizationDate);
+    }
+
+    if (data.deliveryDate) {
+      updateData.deliveryDate = new Date(data.deliveryDate);
+    }
+
     // Si hay nuevas fotos, reemplazarlas
     if (photos?.length) {
       updateData.photos = photos.map((file) => file.buffer);
@@ -109,6 +118,7 @@ export class EquipmentService {
 
     return this.equipmentModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
   }
+
 
 
   // Eliminar un equipo

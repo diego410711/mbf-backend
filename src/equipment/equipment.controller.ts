@@ -148,7 +148,11 @@ export class EquipmentController {
 
       const invoice = files.invoice?.[0] || null;
 
-      return await this.service.update(id, { ...data }, photos, invoice);
+      return await this.service.update(id, {
+        ...data,
+        authorizationDate: data.authorizationDate ? new Date(data.authorizationDate) : undefined,
+        deliveryDate: data.deliveryDate ? new Date(data.deliveryDate) : undefined,
+      }, photos, invoice);
     } catch (error) {
       throw new HttpException(
         `Error al actualizar el equipo: ${error.message}`,
