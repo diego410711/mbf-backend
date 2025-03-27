@@ -36,6 +36,9 @@ export class Equipment {
 
   @Prop()
   diagnosis: string;
+
+  @Prop()
+  customerApproval: string;
 }
 
 export const EquipmentSchema = SchemaFactory.createForClass(Equipment);
