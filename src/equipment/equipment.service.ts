@@ -255,7 +255,7 @@ export class EquipmentService {
         // Medir el tamaño del texto
         const fontSize = 10;
         doc.fontSize(fontSize);
-        const text = '12/10/25';
+        const text = equipment.authorizationDate ? new Date(equipment.authorizationDate).toLocaleDateString('es-ES') : 'No disponible';
         const textWidth = doc.widthOfString(text);
         const textHeight = doc.currentLineHeight();
 
@@ -289,8 +289,8 @@ export class EquipmentService {
         // Medir el tamaño del texto
         const fontSizeClient = 10;
         doc.fontSize(fontSizeClient);
-        const textClient = '12/10/25';
-        const textWidthClient = doc.widthOfString(text);
+        const textClient = equipment.deliveryDate ? new Date(equipment.deliveryDate).toLocaleDateString('es-ES') : 'No disponible';
+        const textWidthClient = doc.widthOfString(textClient);
         const textHeightClient = doc.currentLineHeight();
 
         // Calcular coordenadas exactas para centrar el texto en la celda
@@ -299,7 +299,7 @@ export class EquipmentService {
 
         // Agregar el texto centrado en la celda
         doc.text(textClient, textXClient, textYDateClient, {
-          width: textWidth,
+          width: textWidthClient,
           align: 'center'
         });
         doc
