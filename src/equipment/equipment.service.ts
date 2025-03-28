@@ -195,21 +195,49 @@ export class EquipmentService {
 
         const offsetX = 20; // Ajuste en el eje X
 
+        // Obtener el valor de aprobación del cliente desde la base de datos
+        const customerApproval = equipment.customerApproval; // "SI" o "NO"
+
         // **Dibujar la celda "SI"**
-        doc.rect(marginX + 10 + offsetX, cellY, cellWidth, cellHeight).stroke(); // Dibuja el rectángulo
+        doc.rect(marginX + 10 + offsetX, cellY, cellWidth, cellHeight).stroke();
         doc.fontSize(10).text('SI', marginX + 10 + offsetX, cellY + 5, {
           width: cellWidth,
           align: 'center',
         });
 
+        // Si el valor es "SI", tachar la celda
+        if (customerApproval === "Sí") {
+          doc
+            .moveTo(marginX + 10 + offsetX, cellY) // Esquina superior izquierda
+            .lineTo(marginX + 10 + offsetX + cellWidth, cellY + cellHeight) // Esquina inferior derecha
+            .stroke();
+
+          doc
+            .moveTo(marginX + 10 + offsetX + cellWidth, cellY) // Esquina superior derecha
+            .lineTo(marginX + 10 + offsetX, cellY + cellHeight) // Esquina inferior izquierda
+            .stroke();
+        }
+
         // **Dibujar la celda "NO"**
-        doc
-          .rect(marginX + cellWidth + 10 + offsetX, cellY, cellWidth, cellHeight)
-          .stroke(); // Dibuja el rectángulo
+        doc.rect(marginX + cellWidth + 10 + offsetX, cellY, cellWidth, cellHeight).stroke();
         doc.fontSize(10).text('NO', marginX + cellWidth + 10 + offsetX, cellY + 5, {
           width: cellWidth,
           align: 'center',
         });
+
+        // Si el valor es "NO", tachar la celda
+        if (customerApproval === "No") {
+          doc
+            .moveTo(marginX + cellWidth + 10 + offsetX, cellY) // Esquina superior izquierda
+            .lineTo(marginX + cellWidth + 10 + offsetX + cellWidth, cellY + cellHeight) // Esquina inferior derecha
+            .stroke();
+
+          doc
+            .moveTo(marginX + cellWidth + 10 + offsetX + cellWidth, cellY) // Esquina superior derecha
+            .lineTo(marginX + cellWidth + 10 + offsetX, cellY + cellHeight) // Esquina inferior izquierda
+            .stroke();
+        }
+
 
         doc.fontSize(10).text('FECHA AUTORIZACIÓN: ', marginX + 12, cellY + 35, {
           width: cellWidth + 80,
