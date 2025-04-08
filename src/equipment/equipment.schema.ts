@@ -24,14 +24,14 @@ export class Equipment {
   @Prop()
   photos: Buffer[];
 
-  @Prop({ type: Buffer }) // Tipo explícito para evitar ambigüedades
+  @Prop({ type: Buffer })
   invoice: string | Buffer;
 
   @Prop()
-  assignedTechnician?: string; // Nuevo campo agregado
+  assignedTechnician?: string;
 
   @Prop({ unique: true, sparse: true })
-  technicalDataSheet?: string; // Ahora opcional
+  technicalDataSheet?: string;
 
   @Prop()
   diagnosis: string;
@@ -39,11 +39,30 @@ export class Equipment {
   @Prop()
   customerApproval: string;
 
-  @Prop({ type: Date }) // 📅 Nueva propiedad para la fecha de autorización
+  @Prop({ type: Date })
   authorizationDate?: Date;
 
-  @Prop({ type: Date }) // 📅 Nueva propiedad para la fecha de entrega
+  @Prop({ type: Date })
   deliveryDate?: Date;
+
+  // Nuevos campos opcionales
+  @Prop()
+  firstname?: string;
+
+  @Prop()
+  lastname?: string;
+
+  @Prop()
+  email?: string;
+
+  @Prop()
+  phone?: string;
+
+  @Prop()
+  address?: string;
+
+  @Prop()
+  userId?: string;
 }
 
 export const EquipmentSchema = SchemaFactory.createForClass(Equipment);

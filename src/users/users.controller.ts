@@ -24,7 +24,7 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly authService: AuthService, // Inyecta el servicio de autenticación
     private recaptchaService: RecaptchaService,
-  ) {}
+  ) { }
 
   @Post('register')
   async register(
@@ -126,7 +126,7 @@ export class UsersController {
     }
     const user = await this.usersService.findOne(username);
     if (user && (await bcrypt.compare(password, user.password))) {
-      const { access_token, role, name, lastname, address, phone, userId } =
+      const { access_token, role, name, lastname, address, phone, userId, doc } =
         await this.authService.login(username, password); // Incluye address y phone en el login
       return {
         message: 'Login successful',
@@ -138,6 +138,7 @@ export class UsersController {
         address, // Nuevo campo
         phone, // Nuevo campo
         userId,
+        doc
       };
     }
     throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);

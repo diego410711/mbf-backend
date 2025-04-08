@@ -423,7 +423,7 @@ export class EquipmentService {
         .font('Helvetica-Bold') // Poner en negrita
         .text('NOMBRE: ', contentX, contentY, { continued: true }) // `continued: true` mantiene la misma línea
         .font('Helvetica') // Volver a texto normal
-        .text(equipment.clientName || 'No disponible');
+        .text(equipment.firstname + " " + equipment.lastname || 'No disponible');
 
       contentY += 15;
       doc

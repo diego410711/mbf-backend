@@ -16,7 +16,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly mailerService: MailerService,
-  ) {}
+  ) { }
 
   private client = new OAuth2Client(
     '143084504266-m64qjq4oio23hrpc55s0qs86fq84o7sq.apps.googleusercontent.com',
@@ -58,6 +58,7 @@ export class AuthService {
     userId: string; // Incluimos el userId en la respuesta
     address?: string;
     phone?: string;
+    doc?: string;
   }> {
     const user = await this.usersService.validateUser(username, password);
     if (!user) {
@@ -82,6 +83,7 @@ export class AuthService {
       userId: user._id.toString(), // Incluye el ID del usuario
       address: user.address, // Incluye la dirección
       phone: user.phone, // Incluye el teléfono
+      doc: user.doc,
     };
   }
 
