@@ -435,6 +435,13 @@ export class EquipmentService {
 
       doc
         .font('Helvetica-Bold')
+        .text('EMAIL: ', contentX, contentY, { continued: true })
+        .font('Helvetica')
+        .text(equipment.email || 'No disponible');
+      contentY += 15;
+
+      doc
+        .font('Helvetica-Bold')
         .text('DIRECCIÓN: ', contentX, contentY, { continued: true })
         .font('Helvetica')
         .text(equipment.address || 'No disponible');
