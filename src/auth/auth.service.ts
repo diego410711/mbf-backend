@@ -59,6 +59,7 @@ export class AuthService {
     address?: string;
     phone?: string;
     doc?: string;
+    company?: string;
   }> {
     const user = await this.usersService.validateUser(username, password);
     if (!user) {
@@ -84,6 +85,7 @@ export class AuthService {
       address: user.address, // Incluye la dirección
       phone: user.phone, // Incluye el teléfono
       doc: user.doc,
+      company: user.company,
     };
   }
 

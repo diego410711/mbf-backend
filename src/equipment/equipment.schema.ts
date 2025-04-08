@@ -63,6 +63,12 @@ export class Equipment {
 
   @Prop()
   userId?: string;
+
+  @Prop()
+  doc?: string;
+
+  @Prop()
+  company?: string;
 }
 
 export const EquipmentSchema = SchemaFactory.createForClass(Equipment);

@@ -423,35 +423,35 @@ export class EquipmentService {
         .font('Helvetica-Bold') // Poner en negrita
         .text('NOMBRE: ', contentX, contentY, { continued: true }) // `continued: true` mantiene la misma línea
         .font('Helvetica') // Volver a texto normal
-        .text(equipment.firstname + " " + equipment.lastname || 'No disponible');
+        .text(equipment.company || 'No disponible');
 
       contentY += 15;
       doc
         .font('Helvetica-Bold')
         .text('C.C / NIT: ', contentX, contentY, { continued: true })
         .font('Helvetica')
-        .text(equipment.clientId || 'No disponible');
+        .text(equipment.doc || 'No disponible');
       contentY += 15;
 
       doc
         .font('Helvetica-Bold')
         .text('DIRECCIÓN: ', contentX, contentY, { continued: true })
         .font('Helvetica')
-        .text(equipment.clientAddress || 'No disponible');
+        .text(equipment.address || 'No disponible');
       contentY += 15;
 
       doc
         .font('Helvetica-Bold')
         .text('TEL/CEL: ', contentX, contentY, { continued: true })
         .font('Helvetica')
-        .text(equipment.clientPhone || 'No disponible');
+        .text(equipment.phone || 'No disponible');
       contentY += 15;
 
       doc
         .font('Helvetica-Bold')
         .text('CONTACTO: ', contentX, contentY, { continued: true })
         .font('Helvetica')
-        .text(equipment.clientContact || 'No disponible');
+        .text(equipment.firstname + " " + equipment.lastname || 'No disponible');
 
       contentY += 30;
 

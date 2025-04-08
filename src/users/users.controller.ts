@@ -126,7 +126,7 @@ export class UsersController {
     }
     const user = await this.usersService.findOne(username);
     if (user && (await bcrypt.compare(password, user.password))) {
-      const { access_token, role, name, lastname, address, phone, userId, doc } =
+      const { access_token, role, name, lastname, address, phone, userId, doc, company } =
         await this.authService.login(username, password); // Incluye address y phone en el login
       return {
         message: 'Login successful',
@@ -138,7 +138,8 @@ export class UsersController {
         address, // Nuevo campo
         phone, // Nuevo campo
         userId,
-        doc
+        doc,
+        company
       };
     }
     throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
