@@ -70,20 +70,24 @@ export class EquipmentController {
   }
 
   @Get()
-  async findAll(@Req() req: Request, @Query('technicianName') technicianName?: string): Promise<Equipment[]> {
-    // Obtener usuario autenticado
-
-    // Determinar el nombre del técnico desde req.user o la URL
-    const technician = technicianName
-
-    // Si hay un técnico, filtrar por su nombre
-    if (technician) {
-      return this.service.findByTechnician(technician);
+  async findAll(
+    @Query('technicianName') technicianName?: string,
+    @Query('email') email?: string
+  ): Promise<Equipment[]> {
+    // Si se envía un email, buscar por email del cliente
+    if (email) {
+      return this.service.findByEmail(email);
     }
 
-    // Si no hay filtro, devolver todos los servicios
+    // Si se envía el nombre del técnico, buscar por técnico asignado
+    if (technicianName) {
+      return this.service.findByTechnician(technicianName);
+    }
+
+    // Si no se envía ningún filtro, devolver todos los equipos
     return this.service.findAll();
   }
+
 
 
   @Get(':id')

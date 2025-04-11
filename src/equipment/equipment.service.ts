@@ -56,6 +56,22 @@ export class EquipmentService {
   }
 
 
+  // Obtener equipos por correo del cliente
+  async findByEmail(email: string): Promise<Equipment[]> {
+    const equipments = await this.equipmentModel
+      .find({ email }) // Asegúrate de que el campo se llama "email" en el modelo
+      .exec();
+
+    return equipments.map((equipment) => ({
+      ...equipment.toObject(),
+      invoice: equipment.invoice
+        ? equipment.invoice.toString('base64') // Convertir factura a Base64
+        : null,
+    }));
+  }
+
+
+
   // Obtener un equipo por su ID
   async findOne(id: string): Promise<Equipment> {
     const equipment = await this.equipmentModel.findById(id).exec();
