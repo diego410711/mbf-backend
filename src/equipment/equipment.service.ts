@@ -135,6 +135,23 @@ export class EquipmentService {
     return this.equipmentModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
   }
 
+  async updateCustomerApproval(id: string, approval: string): Promise<Equipment> {
+    const updated = await this.equipmentModel.findByIdAndUpdate(
+      id,
+      {
+        customerApproval: approval,
+        authorizationDate: new Date(),
+      },
+      { new: true },
+    );
+
+    return {
+      ...updated.toObject(),
+      invoice: updated.invoice
+        ? updated.invoice.toString('base64')
+        : null,
+    };
+  }
 
 
   // Eliminar un equipo

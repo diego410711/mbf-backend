@@ -208,4 +208,13 @@ export class EquipmentController {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  @Patch(':id/customer-approval')
+  async updateCustomerApproval(
+    @Param('id') id: string,
+    @Body('approval') approval: string,
+  ): Promise<Equipment> {
+    return this.service.updateCustomerApproval(id, approval);
+  }
+
 }
