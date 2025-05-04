@@ -136,22 +136,17 @@ export class EquipmentService {
   }
 
   async updateCustomerApproval(id: string, approval: string): Promise<Equipment> {
-    const updated = await this.equipmentModel.findByIdAndUpdate(
-      id,
-      {
-        customerApproval: approval,
-        authorizationDate: new Date(),
-      },
-      { new: true },
-    );
-
-    return {
-      ...updated.toObject(),
-      invoice: updated.invoice
-        ? updated.invoice.toString('base64')
-        : null,
+    const updateData: any = {
+      customerApproval: approval,
     };
+
+    if (approval === 'Aprobado') {
+      updateData.authorizationDate = new Date(); // Establece la fecha actual solo si fue aprobado
+    }
+
+    return this.equipmentModel.findByIdAndUpdate(id, updateData, { new: true });
   }
+
 
 
   // Eliminar un equipo
