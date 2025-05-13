@@ -10,6 +10,7 @@ import { Inventory, InventoryDocument } from './inventory.schema';
 import * as PDFDocument from 'pdfkit';
 import { join } from 'path';
 import formatDate from 'src/utils/formatDate';
+import { Equipment } from 'src/equipment/equipment.schema';
 
 @Injectable()
 export class InventoryService {
@@ -150,7 +151,7 @@ export class InventoryService {
       };
 
       // Dibujar las celdas con los datos
-      drawCell('FICHA TÉCNICA:', 'FT-145', startXRight, startYRight);
+      drawCell('FICHA TÉCNICA:', inventory.FT??"No disponible", startXRight, startYRight);
       startYRight += cellHeightRight;
       drawCell('FECHA SERVICIO:', '23/11/2023', startXRight, startYRight);
       startYRight += cellHeightRight;
