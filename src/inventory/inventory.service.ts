@@ -21,26 +21,62 @@ export class InventoryService {
 
   async create(data: Partial<Inventory>): Promise<Inventory> {
     try {
-      const newInventory = new this.inventoryModel(data);
+      let FT = data.FT;
+  
+      if (!FT) {
+        // Buscar el mayor FT tipo FT-xxx
+        const maxFTDoc = await this.inventoryModel
+          .find({ FT: { $regex: /^FT-\d+$/ } })
+          .sort({ FT: -1 })
+          .limit(1)
+          .exec();
+  
+        const maxFT = maxFTDoc.length > 0 ? maxFTDoc[0].FT as string : null;
+        const maxFTNum = maxFT ? parseInt(maxFT.replace('FT-', ''), 10) : null;
+  
+        FT = maxFTNum !== null && maxFTNum >= 300
+          ? `FT-${maxFTNum + 1}`
+          : 'FT-300';
+      } else {
+        // Si el usuario proporciona un FT, verificar formato
+        if (typeof FT === 'string' && !FT.startsWith('FT-')) {
+          FT = `FT-${FT}`;
+        }
+  
+        // Verificar si ya existe
+        const exists = await this.inventoryModel.exists({ FT });
+        if (exists) {
+          throw new BadRequestException(`La ficha técnica ${FT} ya existe.`);
+        }
+      }
+  
+      const newInventory = new this.inventoryModel({
+        ...data,
+        FT,
+      });
+  
       return await newInventory.save();
     } catch (error) {
       if (error.name === 'ValidationError') {
-        // Mapeamos los errores de validación
         const validationErrors = Object.keys(error.errors).map((key) => ({
           field: key,
           message: error.errors[key].message,
         }));
-
+  
         throw new BadRequestException({
           message: 'Validation failed',
           errors: validationErrors,
         });
       }
+  
       throw new InternalServerErrorException(
         'Failed to create inventory. Please try again.',
       );
     }
   }
+  
+  
+
 
   async generatePDF(inventory: any): Promise<Buffer> {
     return new Promise((resolve, reject) => {

@@ -51,8 +51,9 @@ export class Inventory {
   @Prop({ required: true, enum: ['Baja', 'Media', 'Alta'] }) // Campo para "Prioridad de mantenimiento"
   maintenancePriority: string;
 
-  @Prop()
-  FT: string;
+  @Prop({unique: true, sparse: true })
+  FT: String;
+
 }
 
 export const InventorySchema = SchemaFactory.createForClass(Inventory);
