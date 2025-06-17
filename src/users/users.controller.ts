@@ -150,6 +150,11 @@ export class UsersController {
     return await this.usersService.findAll(); // Asegúrate de que estos datos incluyan address y phone
   }
 
+  @Get('technicians')
+  async getTechnicians() {
+    return await this.usersService.findTechnicians();
+  }
+
   @Put('users/:id')
   async updateUser(
     @Param('id') id: string,

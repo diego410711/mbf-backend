@@ -11,7 +11,7 @@ import { User } from './user.schema'; // Asegúrate de que esta ruta sea correct
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel('User') private userModel: Model<User>) {}
+  constructor(@InjectModel('User') private userModel: Model<User>) { }
 
   async findOne(username: string): Promise<User | null> {
     return this.userModel.findOne({ username });
@@ -94,4 +94,10 @@ export class UsersService {
   async findByEmail(username: string): Promise<User | null> {
     return this.userModel.findOne({ username }).exec();
   }
+
+  async findTechnicians(): Promise<User[]> {
+    return this.userModel.find({ role: 'Tecnico' }).select('-password').exec();
+  }
+
+
 }
